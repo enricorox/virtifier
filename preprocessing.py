@@ -4,10 +4,14 @@
 
 
 f = open('virus-sample.fa', 'r')
-g = open('preprocssed_data.fasta', 'a')
+g = open('preprocessed_data.fasta', 'a')
 lines = f.readlines()
 contex = 3
-for line in lines:
+for count, line in enumerate(lines):
+    if line[0] == '>' or line == "":
+        continue
+    if count % 10000 == 0:
+        print(f"Processed {count} lines...", flush=True)
     l = len(line) - 1
     for i in range(0, (l - contex + 1)):
         a = line[i:i + contex]
@@ -28,7 +32,7 @@ for line in lines:
              .replace("GTC", "57").replace("TCC", "58").replace("CCT", "59").replace("CTC", "60")
              .replace("CTA", "61").replace("GGG", "62").replace("TAG", "63").replace("CCC", "64")
              .replace(",\n", "\n"))
-        if i < (1 - contex + 1):
+        if i < (l - contex + 1):
             g.write(str(x) + ",")
         else:
             g.write(str(x))
