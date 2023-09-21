@@ -1,10 +1,13 @@
-# coding: utf-8
+import argparse
 
-# In[1]:
+parser = argparse.ArgumentParser(description='DNA sequence preprocessor')
+parser.add_argument("--infile", type=str, help="fasta file to preprocess")
+parser.add_argument("--outfile", type=str, help="fasta file to preprocess")
 
+args = parser.parse_args()
 
-f = open('virus-sample.fa', 'r')
-g = open('preprocessed_data.fasta', 'a')
+f = open(args.infile, 'r')
+g = open(args.outfile, 'a')
 lines = f.readlines()
 contex = 3
 for count, line in enumerate(lines):
