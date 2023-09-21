@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import with_statement  # 调用句柄模块，这个必须写在脚本开头
-
+from __future__ import with_statement  # Call the handle module, this must be written at the beginning of the script
 import argparse
 import collections
 import math
@@ -115,17 +114,17 @@ valid_examples = np.random.choice(valid_window, valid_size, replace=False)
 
 with graph.as_default():
     with tf.name_scope('inputs'):
-        train_inputs = tf.compat.v1.placeholder(tf.int32, shape=[batch_size])
-        train_labels = tf.compat.v1.placeholder(tf.int32, shape=[batch_size, 1])
+        train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
+        train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
         valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
 
     with tf.device('/cpu:0'):
         with tf.name_scope('embeddings'):
-            embeddings = tf.Variable(tf.compat.v1.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
+            embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
         embed = tf.nn.embedding_lookup(embeddings, train_inputs)
 
     with tf.name_scope('weights'):
-        nce_weights = tf.Variable(tf.compat.v1.truncated_normal([vocabulary_size, embedding_size],
+        nce_weights = tf.Variable(tf.truncated_normal([vocabulary_size, embedding_size],
                                                       stddev=1.0 / math.sqrt(embedding_size)))
     with tf.name_scope('biases'):
         nce_biases = tf.Variable(tf.zeros([vocabulary_size]))
@@ -144,23 +143,23 @@ with graph.as_default():
 
     with tf.name_scope('optimizer'):
         # optimizer = tf.train.AdamOptimizer(0.001).minimize(loss)
-        optimizer = tf.compat.v1.train.AdamOptimizer(0.001).minimize(loss)
+        optimizer = tf.train.AdamOptimizer(0.001).minimize(loss)
 
-    norm = tf.sqrt(tf.compat.v1.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
+    norm = tf.sqrt(tf.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
     normalized_embeddings = embeddings / norm  # 对word2vec矩阵进行了归一化
     valid_embeddings = tf.nn.embedding_lookup(normalized_embeddings,
                                               valid_dataset)
     similarity = tf.matmul(
         valid_embeddings, normalized_embeddings, transpose_b=True)  # 计算余弦相似度
 
-    merged = tf.compat.v1.summary.merge_all()
+    merged = tf.summary.merge_all()
 
-    init = tf.compat.v1.global_variables_initializer()
+    init = tf.global_variables_initializer()
 
-    saver = tf.compat.v1.train.Saver()
+    saver = tf.train.Saver()
 
-with tf.compat.v1.Session(graph=graph) as session:
-    writer = tf.compat.v1.summary.FileWriter(FLAGS.log_dir, session.graph)
+with tf.Session(graph=graph) as session:
+    writer = tf.summary.FileWriter(FLAGS.log_dir, session.graph)
     init.run()
     saver.save(session, os.path.join(FLAGS.log_dir, 'model.ckpt'))
     config = projector.ProjectorConfig()
@@ -170,7 +169,7 @@ with tf.compat.v1.Session(graph=graph) as session:
     projector.visualize_embeddings(writer, config)
 
 num_steps = 300001
-with tf.compat.v1.Session(graph=graph) as session:
+with tf.Session(graph=graph) as session:
     init.run()
     print('Initialized')
     average_loss = 0
