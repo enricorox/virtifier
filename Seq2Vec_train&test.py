@@ -11,14 +11,25 @@ import keras
 from keras.backend.tensorflow_backend import set_session
 import ast
 import numpy as np
-
+import pandas as pd
 os.chdir('train')  # direct
+
+num_train_virus = 99815
+num_train_host = 96963
+num_test_virus = 99892
+num_test_host = 99997
+
+true_num_train_virus = 0
+true_num_train_host = 0
+true_num_test_virus = 0
+true_num_test_host = 0
+
 
 # construct training dataset
 m = []
 g = open('train-sample.csv', 'r')
 lines = g.readlines()
-for line in lines:
+for count, line in enumerate(lines):
     n = line[:-2]
     if n == "":
         continue
@@ -26,18 +37,26 @@ for line in lines:
         k = ast.literal_eval(n)
         j = list(k)
         m.append(j)
+        if count < num_train_virus:
+            true_num_train_virus += 1
+        else:
+            true_num_train_host += 1
     except ValueError:
-        print(f"Can't evaluate: {n}", flush=False)
+        print("Can't evaluate literal", flush=False)
     except TypeError:
-        print(f"Can't iterate: {n}", flush=False)
+        print("Can't iterate literal", flush=False)
 g.close()
-train_x = m
+X_train = m
+num_train_virus = true_num_train_virus
+num_train_host = true_num_train_host
+assert len(X_train) == num_train_virus + num_train_host
+
 
 # construct testing dataset
 a = []
 f = open('test-sample.csv', 'r')
 lines = f.readlines()
-for line in lines:
+for count, line in enumerate(lines):
     b = line[:-2]
     if b == "":
         continue
@@ -45,40 +64,44 @@ for line in lines:
         c = ast.literal_eval(b)
         d = list(c)
         a.append(d)
+        if count < num_test_virus:
+            true_num_test_virus += 1
+        else:
+            true_num_test_host += 1
     except ValueError:
-        print(f"Can't evaluate: {b}", flush=False)
+        print("Can't evaluate literal", flush=False)
     except TypeError:
-        print(f"Can't iterate: {b}", flush=False)
+        print("Can't iterate literal", flush=False)
 f.close()
-test_x = a
+X_test = a
+num_test_virus = true_num_test_virus
+num_test_host = true_num_test_host
+assert len(X_test) == num_test_virus + num_test_host
 
 # construct testing labels
-test_y = []
-num_train_virus = 99815
-num_train_host = 96963
-num_test_virus = 99892
-num_test_host = 99997
+y_test = []
 for i in range(num_train_virus):
-    test_y.append(1)
+    y_test.append(1)
 for i in range(num_train_host):
-    test_y.append(0)
+    y_test.append(0)
 
 # construct training labels
-train_y = []
+y_train = []
 for i in range(num_test_virus):
-    train_y.append(1)
+    y_train.append(1)
 for i in range(num_test_host):
-    train_y.append(0)
+    y_train.append(0)
+
 
 # vocabulary length
 VOCAB_LEN = 65
 # max sequence length
-SEQUENCE_LEN = 498
+SEQUENCE_LEN = 500
 # padding
-train_x = pad_sequences(train_x, maxlen=SEQUENCE_LEN, value=0.)
-test_x = pad_sequences(test_x, maxlen=SEQUENCE_LEN, value=0.)
-train_y = to_categorical(train_y, 2)
-test_y = to_categorical(test_y, 2)
+X_train = pad_sequences(X_train, maxlen=SEQUENCE_LEN, value=0.)
+X_test = pad_sequences(X_test, maxlen=SEQUENCE_LEN, value=0.)
+y_train = to_categorical(y_train, 2)
+y_test = to_categorical(y_test, 2)
 
 # embedding size
 WORD_FEATURE_DIM = 20
@@ -98,4 +121,4 @@ config.gpu_options.allow_growth = True
 set_session(tf.Session(config=config))
 
 # training
-model.fit(train_x, train_y, validation_set=(test_x, test_y), show_metric=True, n_epoch=25, batch_size=256)
+model.fit(X_train, y_train, validation_set=(X_test, y_test), show_metric=True, n_epoch=25, batch_size=256)
