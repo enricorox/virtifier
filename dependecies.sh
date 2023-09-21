@@ -1,3 +1,6 @@
 #!/bin/bash
-# install tensorflow
-conda install -c conda-forge tensorflow
+# create environment
+conda create -n virtifier python==3.7
+conda activate virtifier
+# install tensorflow & co.
+conda install tensorflow==1.15 numpy matplotlib
