@@ -79,18 +79,18 @@ num_test_host = true_num_test_host
 assert len(X_test) == num_test_virus + num_test_host
 
 # construct testing labels
-y_test = []
+y_train = []
 for i in range(num_train_virus):
-    y_test.append(1)
+    y_train.append(1)
 for i in range(num_train_host):
-    y_test.append(0)
+    y_train.append(0)
 
 # construct training labels
-y_train = []
+y_test = []
 for i in range(num_test_virus):
-    y_train.append(1)
+    y_test.append(1)
 for i in range(num_test_host):
-    y_train.append(0)
+    y_test.append(0)
 
 
 # vocabulary length
