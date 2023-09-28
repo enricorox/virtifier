@@ -12,6 +12,7 @@ from keras.backend.tensorflow_backend import set_session
 import ast
 import numpy as np
 import pandas as pd
+
 os.chdir('train')  # direct
 
 num_train_virus = 99815
@@ -24,13 +25,12 @@ true_num_train_host = 0
 true_num_test_virus = 0
 true_num_test_host = 0
 
-
 # construct training dataset
 m = []
 g = open('train-sample.csv', 'r')
 lines = g.readlines()
 for count, line in enumerate(lines):
-    n = line[:-2]
+    n = line[:-1]  # remove LF character
     if n == "":
         continue
     try:
@@ -51,13 +51,12 @@ num_train_virus = true_num_train_virus
 num_train_host = true_num_train_host
 assert len(X_train) == num_train_virus + num_train_host
 
-
 # construct testing dataset
 a = []
 f = open('test-sample.csv', 'r')
 lines = f.readlines()
 for count, line in enumerate(lines):
-    b = line[:-2]
+    b = line[:-1]  # remove LF character
     if b == "":
         continue
     try:
@@ -91,7 +90,6 @@ for i in range(num_test_virus):
     y_test.append(1)
 for i in range(num_test_host):
     y_test.append(0)
-
 
 # vocabulary length
 VOCAB_LEN = 65

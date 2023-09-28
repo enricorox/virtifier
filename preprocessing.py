@@ -35,7 +35,7 @@ for count, line in enumerate(lines):
              .replace("GTC", "57").replace("TCC", "58").replace("CCT", "59").replace("CTC", "60")
              .replace("CTA", "61").replace("GGG", "62").replace("TAG", "63").replace("CCC", "64")
              .replace(",\n", "\n"))
-        if i < (l - contex + 1):
+        if i < (l - contex):
             g.write(str(x) + ",")
         else:
             g.write(str(x))
