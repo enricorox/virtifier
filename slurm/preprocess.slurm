@@ -18,15 +18,15 @@ cd ..
 
 echo "*** Preprocessing training datasets"
 echo "** Preprocess hosts..."
-srun python preprocess.py --infile ../DeepVirFinder/datasets/training/host-training.fa --outfile host-training.csv
+srun python preprocessing.py --infile ../DeepVirFinder/datasets/training/host-training.fa --outfile host-training.csv
 echo "** Preprocess virus..."
-srun python preprocess.py --infile ../DeepVirFinder/datasets/training/virus-training.fa --outfile virus-training.csv
+srun python preprocessing.py --infile ../DeepVirFinder/datasets/training/virus-training.fa --outfile virus-training.csv
 
 echo "*** Preprocessing test datasets"
 echo "** Preprocess hosts..."
-srun python preprocess.py --infile ../DeepVirFinder/datasets/test/host-test.fa --outfile host-test.csv
+srun python preprocessing.py --infile ../DeepVirFinder/datasets/test/host-test.fa --outfile host-test.csv
 echo "** Preprocess virus..."
-srun python preprocess.py --infile ../DeepVirFinder/datasets/test/virus-test.fa --outfile virus-test.csv
+srun python preprocessing.py --infile ../DeepVirFinder/datasets/test/virus-test.fa --outfile virus-test.csv
 
 echo "*** Merging training datasets"
 cat virus-training.csv host-training.csv > data-training.csv
